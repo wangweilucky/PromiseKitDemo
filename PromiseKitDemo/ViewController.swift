@@ -43,8 +43,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 使用闭包的方式
+        /* 使用闭包的方式
         checkNetwork { (result) in
             self.updateUserInfo(block: { (result) in
                 self.downloadUserInfo(block: { (result) in
@@ -54,21 +53,27 @@ class ViewController: UIViewController {
                 })
             })
         }
-        
+         */
+ 
         /*
          1、检测网络是否正常
          2、根据手机号码登录获取token
          3、获取用户的数据
          4、解析用户的数据
-         */
+        */
+        
+        var params = (checkNetwork: false, token: "" , json: "")
         
         firstly {
             self.checkNetwork()
         }.then { (bool) -> Promise<String> in
+            params.checkNetwork = bool
             return self.updateUserInfo()
         }.then { (token) -> Promise<[String: Any]> in
+            params.token = token // 将token数据保存下来
             return self.downloadUserInfo()
         }.then { (json) -> Promise<UserModel> in
+            print(params.token) // 使用token数据
             return self.decoderJSON()
         }.done { (userModel) in
             print("done")
@@ -79,6 +84,7 @@ class ViewController: UIViewController {
         }.finally {
             print("finally")
         }
+ 
         
         
         
@@ -90,11 +96,16 @@ class ViewController: UIViewController {
          4、解析用户的数据
          */
         
+        var params1 = (checkNetwork: false, token: "" , json: "")
+        
         firstly {
-                when(resolved: self.checkNetwork(), self.checkServerNetwork())
+                when(resolved: self.checkNetwork(),
+                     self.checkServerNetwork())
             }.then { (bool) -> Promise<String> in
+//                params.checkNetwork = bool.
                 return self.updateUserInfo()
             }.then { (token) -> Promise<[String: Any]> in
+//                params.token = token
                 return self.downloadUserInfo()
             }.then { (json) -> Promise<UserModel> in
                 return self.decoderJSON()

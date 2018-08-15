@@ -227,7 +227,7 @@ public func when<T>(resolved promises: Promise<T>...) -> Guarantee<[Result<T>]> 
     return when(resolved: promises)
 }
 
-/// Waits on all provided promises.
+/// Waits on all provided promises.// 等待所有的promise完成
 public func when<T>(resolved promises: [Promise<T>]) -> Guarantee<[Result<T>]> {
     guard !promises.isEmpty else {
         return .value([])
